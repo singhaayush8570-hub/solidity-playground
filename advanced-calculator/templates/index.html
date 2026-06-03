@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator Pro - Scientific Calculator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h1>Calculator Pro</h1>
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="switchTab('calculator')" data-tab="calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculator</span>
+                </button>
+                <button class="nav-btn" onclick="switchTab('advanced')" data-tab="advanced">
+                    <i class="fas fa-flask"></i>
+                    <span>Advanced</span>
+                </button>
+                <button class="nav-btn" onclick="switchTab('history')" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-btn" onclick="switchTab('stats')" data-tab="stats">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Stats</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Calculator Tab -->
+            <div id="calculator" class="tab-content active">
+                <div class="calculator-card">
+                    <div class="display-section">
+                        <div class="display-info">Scientific Calculator</div>
+                        <input type="text" id="display" class="display" readonly>
+                    </div>
+
+                    <div class="buttons-container">
+                        <div class="button-row">
+                            <button class="btn fn-btn" title="Pi (Ctrl+P)" onclick="appendDisplay('math.pi')"><span>π</span></button>
+                            <button class="btn fn-btn" title="Euler number" onclick="appendDisplay('math.e')"><span>e</span></button>
+                            <button class="btn fn-btn" title="Square Root" onclick="appendDisplay('sqrt(')"><span>√</span></button>
+                            <button class="btn fn-btn" title="Power" onclick="appendDisplay('**')"><span>xʸ</span></button>
+                            <button class="btn op-btn" title="Clear (C)" onclick="clearDisplay()"><i class="fas fa-undo"></i></button>
+                            <button class="btn op-btn del-btn" title="Delete (Backspace)" onclick="deleteDisplay()"><i class="fas fa-backspace"></i></button>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn fn-btn" title="Sine" onclick="appendDisplay('sin(')"><span>sin</span></button>
+                            <button class="btn fn-btn" title="Cosine" onclick="appendDisplay('cos(')"><span>cos</span></button>
+                            <button class="btn fn-btn" title="Tangent" onclick="appendDisplay('tan(')"><span>tan</span></button>
+                            <button class="btn fn-btn" title="Logarithm" onclick="appendDisplay('log(')"><span>log</span></button>
+                            <button class="btn fn-btn" title="Natural Log" onclick="appendDisplay('ln(')"><span>ln</span></button>
+                            <button class="btn op-btn" title="Left Parenthesis" onclick="appendDisplay('(')"><span>(</span></button>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn num-btn" onclick="appendDisplay('7')">7</button>
+                            <button class="btn num-btn" onclick="appendDisplay('8')">8</button>
+                            <button class="btn num-btn" onclick="appendDisplay('9')">9</button>
+                            <button class="btn op-btn" title="Divide" onclick="appendDisplay('/')">÷</button>
+                            <button class="btn op-btn" title="Modulo" onclick="appendDisplay('%')">%</button>
+                            <button class="btn op-btn" title="Right Parenthesis" onclick="appendDisplay(')')">→)</button>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn num-btn" onclick="appendDisplay('4')">4</button>
+                            <button class="btn num-btn" onclick="appendDisplay('5')">5</button>
+                            <button class="btn num-btn" onclick="appendDisplay('6')">6</button>
+                            <button class="btn op-btn" title="Multiply" onclick="appendDisplay('*')">×</button>
+                            <button class="btn fn-btn" title="Factorial" onclick="appendDisplay('!')">!</button>
+                            <button class="btn fn-btn" title="Exponential" onclick="appendDisplay('exp(')"><span>eˣ</span></button>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn num-btn" onclick="appendDisplay('1')">1</button>
+                            <button class="btn num-btn" onclick="appendDisplay('2')">2</button>
+                            <button class="btn num-btn" onclick="appendDisplay('3')">3</button>
+                            <button class="btn op-btn" title="Subtract" onclick="appendDisplay('-')">−</button>
+                            <button class="btn op-btn" title="Decimal" onclick="appendDisplay('.')">.</button>
+                            <button class="btn op-btn" title="Add" onclick="appendDisplay('+')">+</button>
+                        </div>
+
+                        <div class="button-row full-width">
+                            <button class="btn num-btn" onclick="appendDisplay('0')">0</button>
+                            <button class="btn equals-btn" title="Calculate (Enter)" onclick="calculate()">=</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div id="advanced" class="tab-content">
+                <div class="advanced-grid">
+                    <!-- Quadratic Solver -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Quadratic Solver</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="formula">ax² + bx + c = 0</p>
+                            <input type="number" id="quad-a" placeholder="a" step="any" class="input-field">
+                            <input type="number" id="quad-b" placeholder="b" step="any" class="input-field">
+                            <input type="number" id="quad-c" placeholder="c" step="any" class="input-field">
+                            <button class="btn-primary" onclick="solveQuadratic()">
+                                <i class="fas fa-calculator"></i> Solve
+                            </button>
+                            <div id="quad-result" class="result-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- Factorial -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-star"></i>
+                            <h3>Factorial</h3>
+                        </div>
+                        <div class="card-body">
+                            <input type="number" id="fact-n" placeholder="Enter n (0-170)" min="0" max="170" class="input-field">
+                            <button class="btn-primary" onclick="calculateFactorial()">
+                                <i class="fas fa-infinity"></i> Calculate
+                            </button>
+                            <div id="fact-result" class="result-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fibonacci -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-spiral"></i>
+                            <h3>Fibonacci</h3>
+                        </div>
+                        <div class="card-body">
+                            <input type="number" id="fib-n" placeholder="Number of terms" min="1" max="100" class="input-field">
+                            <button class="btn-primary" onclick="generateFibonacci()">
+                                <i class="fas fa-sequence"></i> Generate
+                            </button>
+                            <div id="fib-result" class="result-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- Prime Factors -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-dice"></i>
+                            <h3>Prime Factors</h3>
+                        </div>
+                        <div class="card-body">
+                            <input type="number" id="prime-n" placeholder="Enter number" min="2" class="input-field">
+                            <button class="btn-primary" onclick="getPrimeFactors()">
+                                <i class="fas fa-magnifying-glass"></i> Factorize
+                            </button>
+                            <div id="prime-result" class="result-box"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div class="history-header">
+                    <h2><i class="fas fa-history"></i> Calculation History</h2>
+                    <div class="history-controls">
+                        <input type="text" id="search-input" placeholder="Search calculations..." class="search-field" onkeyup="searchHistory()">
+                        <button class="btn-danger" onclick="clearAllHistory()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div id="history-list" class="history-list"></div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="stats" class="tab-content">
+                <div class="stats-header">
+                    <h2><i class="fas fa-chart-pie"></i> Statistics</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="stat-label">Total Calculations</div>
+                        <div class="stat-value" id="stat-total">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                        <div class="stat-label">Most Used Operation</div>
+                        <div class="stat-value" id="stat-op">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
