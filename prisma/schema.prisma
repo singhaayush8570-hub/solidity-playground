@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  STAFF
+  READONLY
+}
+
+enum PartyType {
+  CUSTOMER
+  SUPPLIER
+}
+
+enum EntryType {
+  DEBIT
+  CREDIT
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+}
+
+model Tenant {
+  id            String         @id @default(cuid())
+  name          String
+  createdAt     DateTime       @default(now())
+  memberships   Membership[]
+  parties       Party[]
+  ledgerEntries LedgerEntry[]
+  payments      Payment[]
+  subscription  Subscription?
+}
+
+model Membership {
+  id        String         @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      MembershipRole
+  createdAt DateTime       @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([userId])
+}
+
+model Party {
+  id         String    @id @default(cuid())
+  tenantId   String
+  name       String
+  phone      String?
+  type       PartyType
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  ledgerEntries LedgerEntry[]
+
+  @@index([tenantId, type])
+}
+
+model LedgerEntry {
+  id          String    @id @default(cuid())
+  tenantId    String
+  partyId     String
+  entryType   EntryType
+  amountMinor Int
+  note        String?
+  createdAt   DateTime  @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  party  Party  @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, partyId, createdAt])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  tenantId    String
+  partyId     String
+  amountMinor Int
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  party  Party  @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+}
+
+model Plan {
+  id               String @id @default(cuid())
+  code             String @unique
+  name             String
+  monthlyPriceInr  Int
+  maxParties       Int
+  maxEntriesMonthly Int
+}
+
+model Subscription {
+  id                String             @id @default(cuid())
+  tenantId          String             @unique
+  planId            String
+  status            SubscriptionStatus @default(TRIALING)
+  stripeCustomerId  String?            @unique
+  stripeSubId       String?            @unique
+  currentPeriodEnd  DateTime?
+  createdAt         DateTime           @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [planId], references: [id])
+}
